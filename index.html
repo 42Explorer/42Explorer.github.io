@@ -5,21 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>42 Explorer</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
     <div class="mainPage">
-        <img src="logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
-        <h1 class="mainTitle">42 Explorer</h1>
+        <div class="header">
+            <a href="https://www.instagram.com/42_explorer" target="_blank">
+                <img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
+            </a>
+            <h1 class="mainTitle">42 Explorer</h1>
+        </div>
         <div>
-            <input type="text" placeholder="Posez nous vos questions !">
+            <form onsubmit="submitForm(); return false;">
+                <input type="text" id="question" placeholder="Enter your question">
+                <button type="submit">Submit</button>
+            </form>
             <p>
                 Nous sommes ravis de vous inviter à notre prochaine conférence: <b>"Décrocher votre premier emploi en informatique : Stratégies et perspectives."</b><br>
                 En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
                 Vos questions seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
                 <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
             </p>
+            <!-- Display area for fetched questions -->
+            <div id="questionsList"></div>
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
+            authDomain: "conf-request.firebaseapp.com",
+            projectId: "conf-request",
+            storageBucket: "conf-request.appspot.com",
+            messagingSenderId: "316233234211",
+            appId: "1:316233234211:web:8acc9c1b2d6d7f4ddcfe96",
+            measurementId: "G-DJRGCFRKX0"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+
+        function submitForm() {
+            var questionInput = document.getElementById('question');
+            var question = questionInput.value.trim();
+            if (question === "") {
+                alert('Please enter a question.');
+                questionInput.focus();
+                return;
+            }
+            db.collection("questions").add({
+                question: question
+            })
+            .then((docRef) => {
+                console.log("Document written with ID: ", docRef.id);
+                alert('Question submitted successfully!');
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+                alert('Failed to submit question. Please try again.');
+            });
+        }
+
+        function fetchQuestions() {
+            db.collection("questions").get().then((querySnapshot) => {
+                const questionsList = document.getElementById('questionsList');
+                questionsList.innerHTML = ''; // Clear previous entries
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const questionItem = document.createElement('p');
+                    questionItem.textContent = data.question; // Assuming 'question' is the field name
+                    questionsList.appendChild(questionItem);
+                });
+            }).catch((error) => {
+                console.error("Error getting documents: ", error);
+            });
+        }
+
+        // Call fetchQuestions on page load
+        document.addEventListener('DOMContentLoaded', fetchQuestions);
+
+    </script>
 </body>
 </html>
