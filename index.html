@@ -45,22 +45,29 @@
         function submitForm() {
             var questionInput = document.getElementById('question');
             var question = questionInput.value.trim();
+            var submitButton = document.querySelector('button[type="submit"]');
+
             if (question === "") {
                 alert('Please enter a question.');
                 questionInput.focus();
                 return;
             }
+
+            submitButton.disabled = true;
+
             db.collection("questions").add({
                 question: question
             })
             .then((docRef) => {
                 console.log("Document written with ID: ", docRef.id);
                 alert('Question submitted successfully!');
-                // fetchQuestions(); // Make sure this is commented out or removed
+                questionInput.value = '';
+                submitButton.disabled = false;
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
                 alert('Failed to submit question. Please try again.');
+                submitButton.disabled = false;
             });
         }
     </script>
