@@ -6,9 +6,13 @@ body, html {
     align-items: center;
     padding: 10px;
     color: #ffffff;
+}
+
+body {
     background-image: radial-gradient(circle, #001b40, #000000);
-    background-size: cover;
-    background-position: center;
+    /* background-image: url("./logoExplorerWhite.png"); */
+    background-size: 100% 100%;
+    background-position: 50% 50%;
     background-repeat: no-repeat;
 }
 
@@ -19,7 +23,6 @@ body, html {
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
     padding: 20px;
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .header {
@@ -41,7 +44,6 @@ input[type="text"] {
     margin-top: 10px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
 input[type="text"]:focus {
@@ -51,22 +53,22 @@ input[type="text"]:focus {
 }
 
 button {
-    background-image: radial-gradient(circle, #0056b3, #0084ff);
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-image: radial-gradient(circle, #0056b3, #0084ff); /* Blue gradient background */
+    color: #ffffff; /* White text color */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Vertical and horizontal padding */
+    font-size: 16px; /* Adequate font size for readability */
+    font-weight: bold; /* Makes the text bold */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
 button:hover, button:focus {
-    background-image: radial-gradient(circle, #007bff, #0056b3);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    outline: none;
+    background-image: radial-gradient(circle, #007bff, #0056b3); /* Slightly different gradient on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Increased shadow on hover for a "lifting" effect */
+    outline: none; /* Remove focus outline */
 }
 
 @media (max-width: 384px) {
@@ -76,30 +78,32 @@ button:hover, button:focus {
         max-width: 100%;
     }
 
-    .mainTitle, .header, input[type="text"], button {
-        font-size: 3rem;
-        padding: 8px;
-        margin: 5px auto;
+    body, html {
+        padding: 0;
     }
 
     .mainTitle {
-        font-size: 2rem;
-        margin-left: 0;
-    }
-
-    input[type="text"], button {
-        font-size: 14px;
+        font-size: 3rem;
     }
 
     .header {
         flex-direction: column;
-        text-align: center;
     }
 }
 
 @media (max-width: 768px) {
+    .mainPage {
+        padding: 10px;
+        margin: 10px;
+        max-width: 100%;
+    }
+
+    body, html {
+        padding: 0;
+    }
+
     .mainTitle {
-        font-size: 3rem;
+        font-size: 4rem;
     }
 
     .header {
@@ -110,5 +114,9 @@ button:hover, button:focus {
 @media (min-width: 1024px) {
     input[type="text"] {
         font-size: x-large;
+    }
+
+    .mainTitle {
+        font-size: 5rem;
     }
 }
