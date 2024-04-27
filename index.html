@@ -25,8 +25,6 @@
                 Vos questions seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
                 <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
             </p>
-            <!-- Display area for fetched questions -->
-            <div id="questionsList"></div>
         </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
@@ -58,32 +56,13 @@
             .then((docRef) => {
                 console.log("Document written with ID: ", docRef.id);
                 alert('Question submitted successfully!');
+                // fetchQuestions(); // Make sure this is commented out or removed
             })
             .catch((error) => {
                 console.error("Error adding document: ", error);
                 alert('Failed to submit question. Please try again.');
             });
         }
-
-        function fetchQuestions() {
-            db.collection("questions").get().then((querySnapshot) => {
-                const questionsList = document.getElementById('questionsList');
-                questionsList.innerHTML = ''; // Clear previous entries
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const questionItem = document.createElement('p');
-                    questionItem.textContent = data.question; // Assuming 'question' is the field name
-                    questionsList.appendChild(questionItem);
-                });
-            }).catch((error) => {
-                console.error("Error getting documents: ", error);
-            });
-        }
-
-        // Call fetchQuestions on page load
-        document.addEventListener('DOMContentLoaded', fetchQuestions);
-
     </script>
 </body>
 </html>
