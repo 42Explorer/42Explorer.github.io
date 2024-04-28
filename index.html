@@ -8,25 +8,39 @@
 </head>
 <body>
     <div class="mainPage">
+
         <div class="header">
             <a href="https://www.instagram.com/42_explorer" target="_blank">
                 <img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
             </a>
             <h1 class="mainTitle">42 Explorer</h1>
         </div>
+
+        <button id="languageToggle">FR</button>
+
         <div>
             <form onsubmit="submitForm(); return false;">
-                <input type="text" id="question" placeholder="Posez vos questions !">
-                <button type="submit">Submit</button>
+                <input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!" placeholder="Posez vos questions !">
+                <button type="submit" data-fr="Soumettre" data-en="Submit">Soumettre</button>
             </form>
-            <p>
-                Nous sommes ravis de vous inviter à notre prochaine conférence: <b>"Décrocher votre premier emploi en informatique : Stratégies et perspectives."</b><br>
+            <p id="conferenceText" data-fr=
+                    "Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Décrocher votre premier emploi en informatique : Stratégies et perspectives.'</b><br>
+                    En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
+                    Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
+                    <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionnel dans le secteur informatique.</b>"
+                data-en=
+                    "We are delighted to invite you to our upcoming conference: <b>'Landing Your First Job in IT: Strategies and Perspectives.'</b><br>
+                    In preparation for a day rich in networking opportunities, we would like to collect your questions.<br>
+                    They will be asked to the speakers (IT HR/technical recruitment) at the event and must therefore be <b>relevant</b> to it.<br>
+                    Join us to gain the necessary knowledge to start your professional journey in the IT sector.">
+                Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Décrocher votre premier emploi en informatique : Stratégies et perspectives.</b><br>
                 En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
                 Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
                 <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
             </p>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
     <script>
@@ -70,6 +84,33 @@
                 submitButton.disabled = false;
             });
         }
+
+        function toggleLanguage() {
+            var currentLang = document.body.getAttribute('data-lang');
+            var newLang = currentLang === 'en' ? 'fr' : 'en';
+
+            document.body.setAttribute('data-lang', newLang);
+            document.getElementById('languageToggle').textContent = newLang.toUpperCase();
+
+            document.querySelectorAll('[data-fr]').forEach(function(el) {
+                var newText = newLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
+                if (el.tagName.toLowerCase() === 'input') {
+                    el.placeholder = newText;
+                } else if (el.tagName.toLowerCase() === 'button') {
+                    el.textContent = newText;
+                } else {
+                    el.innerHTML = newText;
+                }
+            });
+        }
+
+        document.body.setAttribute('data-lang', 'fr');
+
+        document.getElementById('languageToggle').addEventListener('click', function() {
+            toggleLanguage();
+            this.blur();
+        });
+
     </script>
 </body>
 </html>
