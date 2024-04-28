@@ -68,6 +68,18 @@
 		});
 
 		window.onload = function() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const code = urlParams.get('code');
+			const state = urlParams.get('state');
+			const savedState = sessionStorage.getItem('oauthState');
+
+			if (code && state === savedState) {
+				document.getElementById('loginButton').style.display = 'none';
+				document.getElementById('secureContent').style.display = 'block';
+			}
+		};
+
+		/*window.onload = function() {
 			if (window.location.hash) {
 				var hash = window.location.hash.substring(1);
 				var params = new URLSearchParams(hash);
@@ -80,7 +92,7 @@
 				document.getElementById('secureContent').style.display = 'block';
 				//}
 			}
-		};
+		};*/
 	</script>
 	<script>
 		var firebaseConfig = {
