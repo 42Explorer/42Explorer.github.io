@@ -67,6 +67,25 @@
 			window.location.href = oauthUrl;
 		});
 
+		function loginRequest(code) {
+			var login;
+			fetch('https://api.intra.42.fr/v2/users', {
+			headers: {
+				'Authorization': 'Bearer ' + code
+			}
+			})
+			.then(response => response.json())
+			.then(users => {
+			if (users.length > 0) {
+				return users[0].login;
+			}
+			})
+			.catch(error => {
+				console.error('Failed to fetch data:', error);
+			});
+		}
+
+		var login;
 		window.onload = function() {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
@@ -76,10 +95,10 @@
 			if (code && state === savedState) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
+				login = loginRequest(code);
 			}
 		};
-	</script>
-	<script>
+
 		var firebaseConfig = {
 			apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
 			authDomain: "conf-request.firebaseapp.com",
@@ -106,7 +125,7 @@
 			submitButton.disabled = true;
 
 			db.collection("questions").add({
-				question: question
+				question: login + ': ' + question
 			})
 			.then((docRef) => {
 				console.log("Document written with ID: ", docRef.id);
