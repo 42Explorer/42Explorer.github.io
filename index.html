@@ -58,7 +58,7 @@
 
 		document.getElementById('loginButton').addEventListener('click', function() {
 			var clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			var redirectUri = encodeURIComponent('https://42explorer.github.io/oauth-callback.html');
+			var redirectUri = encodeURIComponent('https://42explorer.github.io');
 			var scope = encodeURIComponent('public');
 			var state = generateState(16);
 			sessionStorage.setItem('oauthState', state);
