@@ -75,7 +75,7 @@
 				var state = params.get('state');
 				var savedState = sessionStorage.getItem('oauthState');
 
-				if (accessToken && state === savedState) {
+				if (accessToken && state != null) {
 					document.getElementById('loginButton').style.display = 'none';
 					document.getElementById('secureContent').style.display = 'block';
 				}
