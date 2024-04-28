@@ -89,6 +89,39 @@ button:hover, button:focus {
     background-image: radial-gradient(circle, #007bff, #0056b3);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     outline: none;
+    transition: background-color 0.3s ease;
+}
+
+#languageToggle {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    padding: 5px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    background-image: radial-gradient(circle, #0056b3, #0084ff);
+    transition: background-color 0.3s ease;
+}
+
+#languageToggle:hover, 
+#languageToggle:focus {
+    background-image: radial-gradient(circle, #007bff, #0056b3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+#languageToggle:hover {
+    background-image: radial-gradient(circle, #007bff, #0056b3) !important;
+}
+
+#languageToggle:focus {
+    outline: none;
+}
+
+[data-lang="fr"] #conferenceText {
+    font-size: 0.90em;
+    line-height: 1.5;
 }
 
 @media (max-width: 384px) {
@@ -109,6 +142,10 @@ button:hover, button:focus {
     .header {
         flex-direction: column;
     }
+
+    [data-lang="fr"] #conferenceText {
+        font-size: 0.8em;
+    }
 }
 
 @media (max-width: 768px) {
@@ -128,6 +165,10 @@ button:hover, button:focus {
 
     .header {
         flex-direction: column;
+    }
+
+    [data-lang="fr"] #conferenceText {
+        font-size: 0.85em;
     }
 }
 
