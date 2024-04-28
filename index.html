@@ -1,201 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>42 Explorer</title>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>42 Explorer</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="mainPage">
+	<div class="mainPage">
 
-        <div class="header">
-            <a href="https://www.instagram.com/42_explorer" target="_blank">
-                <img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
-            </a>
-            <h1 class="mainTitle">42 Explorer</h1>
-            <button onclick="location.href='/auth/42'">Login with 42</button>
-            <div id="user-info"></div>
-        </div>
+		<div class="header">
+			<a href="https://www.instagram.com/42_explorer" target="_blank">
+				<img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
+			</a>
+			<h1 class="mainTitle">42 Explorer</h1>
+		</div>
 
-        <button id="languageToggle">FR</button>
+		<button id="loginButton">Login with 42</button>
 
-        <div>
-            <form onsubmit="submitForm(); return false;">
-                <input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!" placeholder="Posez vos questions !" autocomplete="off" autofocus>
-                <button type="submit" data-fr="Soumettre" data-en="Submit">Soumettre</button>
-            </form>
-            <p id="conferenceText" data-fr=
-                    "Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Décrocher votre premier emploi en informatique : Stratégies et perspectives.'</b><br>
-                    En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
-                    Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
-                    <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionnel dans le secteur informatique.</b>"
-                data-en=
-                    "We are delighted to invite you to our upcoming conference: <b>'Landing Your First Job in IT: Strategies and Perspectives.'</b><br>
-                    In preparation for a day rich in networking opportunities, we would like to collect your questions.<br>
-                    They will be asked to the speakers (IT HR/technical recruitment) at the event and must therefore be <b>relevant</b> to it.<br>
-                    <b>Join us to gain the necessary knowledge to start your professional journey in the IT sector.</b>">
-                Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Décrocher votre premier emploi en informatique : Stratégies et perspectives.</b><br>
-                En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
-                Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
-                <b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
-            </p>
-        </div>
-    </div>
+		<button id="languageToggle">FR</button>
 
-    <script>
-        const express = require('express');
-        const axios = require('axios');
-        const app = express();
-        const port = 3000;
+		<div id="secureContent" style="display: none;">
+			<form onsubmit="submitForm(); return false;">
+				<input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!" placeholder="Posez vos questions !" autocomplete="off" autofocus>
+				<button type="submit" data-fr="Soumettre" data-en="Submit">Soumettre</button>
+			</form>
+			<p id="conferenceText" data-fr=
+					"Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Décrocher votre premier emploi en informatique : Stratégies et perspectives.'</b><br>
+					En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
+					Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
+					<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionnel dans le secteur informatique.</b>"
+				data-en=
+					"We are delighted to invite you to our upcoming conference: <b>'Landing Your First Job in IT: Strategies and Perspectives.'</b><br>
+					In preparation for a day rich in networking opportunities, we would like to collect your questions.<br>
+					They will be asked to the speakers (IT HR/technical recruitment) at the event and must therefore be <b>relevant</b> to it.<br>
+					<b>Join us to gain the necessary knowledge to start your professional journey in the IT sector.</b>">
+				Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Décrocher votre premier emploi en informatique : Stratégies et perspectives.</b><br>
+				En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
+				Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
+				<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
+			</p>
+		</div>
+	</div>
 
-        // Initialize Firebase Admin SDK
-        const admin = require('firebase-admin');
-        const serviceAccount = require('./path-to-firebase-adminsdk.json');
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+	<script>
+		function generateState(length) {
+			var result = '';
+			var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+			var charactersLength = characters.length;
+			for (var i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			}
+			return result;
+		}
 
-        admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-        });
+		document.getElementById('loginButton').addEventListener('click', function() {
+			var clientId = 'u-s4t2ud-e56de4d3995fcc927a9a9a166c6b179312ee5d03d0b5f3c4fe55eb1b9d0ac013';
+			var redirectUri = encodeURIComponent('https://42explorer.github.io/oauth-callback');
+			var scope = encodeURIComponent('public');
+			var state = generateState(16);
+			sessionStorage.setItem('oauthState', state);
 
-        const db1 = admin.firestore();
+			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+			window.location.href = oauthUrl;
+		});
 
-        // Redirect user to the 42 OAuth page
-        app.get('/auth/42', (req, res) => {
-            const url = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e56de4d3995fcc927a9a9a166c6b179312ee5d03d0b5f3c4fe55eb1b9d0ac013&redirect_uri=http://localhost:${port}/callback&response_type=code`;
-            res.redirect(url);
-        });
+		window.onload = function() {
+			if (window.location.hash) {
+				var hash = window.location.hash.substring(1);
+				var params = new URLSearchParams(hash);
+				var accessToken = params.get('access_token');
+				var state = params.get('state');
+				var savedState = sessionStorage.getItem('oauthState');
 
-        // OAuth callback endpoint
-        app.get('/callback', async (req, res) => {
-            try {
-                const { code } = req.query;
-                const response = await axios.post('https://api.intra.42.fr/oauth/token', {
-                    grant_type: 'authorization_code',
-                    client_id: 'u-s4t2ud-e56de4d3995fcc927a9a9a166c6b179312ee5d03d0b5f3c4fe55eb1b9d0ac013',
-                    client_secret: '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',
-                    code: code,
-                    redirect_uri: `http://localhost:${port}/callback`
-                });
+				if (accessToken && state === savedState) {
+					document.getElementById('loginButton').style.display = 'none';
+					document.getElementById('secureContent').style.display = 'block';
+				}
+			}
+		};
+	</script>
+	<script>
+		var firebaseConfig = {
+			apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
+			authDomain: "conf-request.firebaseapp.com",
+			projectId: "conf-request",
+			storageBucket: "conf-request.appspot.com",
+			messagingSenderId: "316233234211",
+			appId: "1:316233234211:web:8acc9c1b2d6d7f4ddcfe96",
+			measurementId: "G-DJRGCFRKX0"
+		};
+		firebase.initializeApp(firebaseConfig);
+		var db = firebase.firestore();
 
-                const accessToken = response.data.access_token;
+		function submitForm() {
+			var questionInput = document.getElementById('question');
+			var question = questionInput.value.trim();
+			var submitButton = document.querySelector('button[type="submit"]');
 
-                // Fetch user details with access token
-                const userResponse = await axios.get('https://api.intra.42.fr/v2/me', {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                });
+			if (question === "") {
+				alert('Please enter a question.');
+				questionInput.focus();
+				return;
+			}
 
-                // You can now use user details to do something, like creating a session
-                // For this example, let's assume you redirect to a front-end page with the user's info
-                res.redirect(`/?user=${encodeURIComponent(userResponse.data.login)}`);
-            } catch (error) {
-                console.error('Authentication failed:', error);
-                res.status(500).send('Authentication failed');
-            }
-        });
+			submitButton.disabled = true;
 
-        app.listen(port, () => {
-            console.log(`Server running on http://localhost:${port}`);
-        });
+			db.collection("questions").add({
+				question: question
+			})
+			.then((docRef) => {
+				console.log("Document written with ID: ", docRef.id);
+				alert('Question submitted successfully!');
+				questionInput.value = '';
+				submitButton.disabled = false;
+			})
+			.catch((error) => {
+				console.error("Error adding document: ", error);
+				alert('Failed to submit question. Please try again.');
+				submitButton.disabled = false;
+			});
+		}
 
-        function submitQuestion() {
-            const question = document.getElementById('question').value;
-            const user = document.getElementById('user-info').textContent;
+		function toggleLanguage() {
+			var currentLang = document.body.getAttribute('data-lang');
+			var newLang = currentLang === 'en' ? 'fr' : 'en';
 
-            const db1 = firebase.firestore();
-            db1.collection("questions").add({
-                question: question,
-                user: user
-            })
-            .then(docRef => {
-                console.log("Document written with ID: ", docRef.id);
-                alert('Question submitted successfully!');
-                document.getElementById('question').value = '';
-            })
-            .catch(error => {
-                console.error("Error adding document: ", error);
-                alert('Failed to submit question. Please try again.');
-            });
-        }
+			document.body.setAttribute('data-lang', newLang);
+			document.getElementById('languageToggle').textContent = newLang.toUpperCase();
 
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const user = urlParams.get('user');
-            if (user) {
-                document.getElementById('user-info').textContent = `Logged in as: ${user}`;
-            }
-        };
-    </script>
+			document.querySelectorAll('[data-fr]').forEach(function(el) {
+				var newText = newLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
+				if (el.tagName.toLowerCase() === 'input') {
+					el.placeholder = newText;
+				} else if (el.tagName.toLowerCase() === 'button') {
+					el.textContent = newText;
+				} else {
+					el.innerHTML = newText;
+				}
+			});
+		}
 
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
-    <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
-            authDomain: "conf-request.firebaseapp.com",
-            projectId: "conf-request",
-            storageBucket: "conf-request.appspot.com",
-            messagingSenderId: "316233234211",
-            appId: "1:316233234211:web:8acc9c1b2d6d7f4ddcfe96",
-            measurementId: "G-DJRGCFRKX0"
-        };
-        firebase.initializeApp(firebaseConfig);
-        var db = firebase.firestore();
+		document.body.setAttribute('data-lang', 'fr');
 
-        function submitForm() {
-            var questionInput = document.getElementById('question');
-            var question = questionInput.value.trim();
-            var submitButton = document.querySelector('button[type="submit"]');
+		document.getElementById('languageToggle').addEventListener('click', function() {
+			toggleLanguage();
+			this.blur();
+		});
 
-            if (question === "") {
-                alert('Please enter a question.');
-                questionInput.focus();
-                return;
-            }
-
-            submitButton.disabled = true;
-
-            db.collection("questions").add({
-                question: question
-            })
-            .then((docRef) => {
-                console.log("Document written with ID: ", docRef.id);
-                alert('Question submitted successfully!');
-                questionInput.value = '';
-                submitButton.disabled = false;
-            })
-            .catch((error) => {
-                console.error("Error adding document: ", error);
-                alert('Failed to submit question. Please try again.');
-                submitButton.disabled = false;
-            });
-        }
-
-        function toggleLanguage() {
-            var currentLang = document.body.getAttribute('data-lang');
-            var newLang = currentLang === 'en' ? 'fr' : 'en';
-
-            document.body.setAttribute('data-lang', newLang);
-            document.getElementById('languageToggle').textContent = newLang.toUpperCase();
-
-            document.querySelectorAll('[data-fr]').forEach(function(el) {
-                var newText = newLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
-                if (el.tagName.toLowerCase() === 'input') {
-                    el.placeholder = newText;
-                } else if (el.tagName.toLowerCase() === 'button') {
-                    el.textContent = newText;
-                } else {
-                    el.innerHTML = newText;
-                }
-            });
-        }
-
-        document.body.setAttribute('data-lang', 'fr');
-
-        document.getElementById('languageToggle').addEventListener('click', function() {
-            toggleLanguage();
-            this.blur();
-        });
-
-    </script>
+	</script>
 </body>
 </html>
