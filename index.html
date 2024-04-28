@@ -14,6 +14,8 @@
                 <img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
             </a>
             <h1 class="mainTitle">42 Explorer</h1>
+            <button onclick="location.href='/auth/42'">Login with 42</button>
+            <div id="user-info"></div>
         </div>
 
         <button id="languageToggle">FR</button>
@@ -40,6 +42,89 @@
             </p>
         </div>
     </div>
+
+    <script>
+        const express = require('express');
+        const axios = require('axios');
+        const app = express();
+        const port = 3000;
+
+        // Initialize Firebase Admin SDK
+        const admin = require('firebase-admin');
+        const serviceAccount = require('./path-to-firebase-adminsdk.json');
+
+        admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+        });
+
+        const db1 = admin.firestore();
+
+        // Redirect user to the 42 OAuth page
+        app.get('/auth/42', (req, res) => {
+            const url = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-e56de4d3995fcc927a9a9a166c6b179312ee5d03d0b5f3c4fe55eb1b9d0ac013&redirect_uri=http://localhost:${port}/callback&response_type=code`;
+            res.redirect(url);
+        });
+
+        // OAuth callback endpoint
+        app.get('/callback', async (req, res) => {
+            try {
+                const { code } = req.query;
+                const response = await axios.post('https://api.intra.42.fr/oauth/token', {
+                    grant_type: 'authorization_code',
+                    client_id: 'u-s4t2ud-e56de4d3995fcc927a9a9a166c6b179312ee5d03d0b5f3c4fe55eb1b9d0ac013',
+                    client_secret: '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',
+                    code: code,
+                    redirect_uri: `http://localhost:${port}/callback`
+                });
+
+                const accessToken = response.data.access_token;
+
+                // Fetch user details with access token
+                const userResponse = await axios.get('https://api.intra.42.fr/v2/me', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+
+                // You can now use user details to do something, like creating a session
+                // For this example, let's assume you redirect to a front-end page with the user's info
+                res.redirect(`/?user=${encodeURIComponent(userResponse.data.login)}`);
+            } catch (error) {
+                console.error('Authentication failed:', error);
+                res.status(500).send('Authentication failed');
+            }
+        });
+
+        app.listen(port, () => {
+            console.log(`Server running on http://localhost:${port}`);
+        });
+
+        function submitQuestion() {
+            const question = document.getElementById('question').value;
+            const user = document.getElementById('user-info').textContent;
+
+            const db1 = firebase.firestore();
+            db1.collection("questions").add({
+                question: question,
+                user: user
+            })
+            .then(docRef => {
+                console.log("Document written with ID: ", docRef.id);
+                alert('Question submitted successfully!');
+                document.getElementById('question').value = '';
+            })
+            .catch(error => {
+                console.error("Error adding document: ", error);
+                alert('Failed to submit question. Please try again.');
+            });
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const user = urlParams.get('user');
+            if (user) {
+                document.getElementById('user-info').textContent = `Logged in as: ${user}`;
+            }
+        };
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
