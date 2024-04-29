@@ -93,6 +93,7 @@
 			const savedState = sessionStorage.getItem('oauthState');
 
 			if (code && state === savedState) {
+				console.log(code);
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
 				login = loginRequest(code);
