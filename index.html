@@ -63,7 +63,7 @@
 			var state = generateState(16);
 			sessionStorage.setItem('oauthState', state);
 
-			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=${state}`;
 			window.location.href = oauthUrl;
 		});
 
