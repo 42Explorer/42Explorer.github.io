@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>42 Explorer</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" href="./logoExplorerWhite.ico">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 	<div class="mainPage">
 
@@ -22,42 +25,72 @@
 		<div id="secureContent" style="display: none;">
 			<button id="languageToggle">FR</button>
 			<form onsubmit="submitForm(); return false;">
-				<input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!" placeholder="Posez vos questions !" autocomplete="off" autofocus>
+				<input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!"
+					placeholder="Posez vos questions !" autocomplete="off" autofocus>
 				<button type="submit" data-fr="Soumettre" data-en="Submit">Soumettre</button>
 			</form>
-			<p id="conferenceText" data-fr=
-					"Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Du savoir technique au professionnel: votre itinéraire vers le succès IT.'</b><br>
+			<p id="conferenceText"
+				data-fr="Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Du savoir technique au professionnel: votre itinéraire vers le succès IT.'</b><br>
 					En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
 					Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
 					<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionnel dans le secteur informatique.</b>"
-				data-en=
-					"We are delighted to invite you to our upcoming conference: <b>'From Technical Knowledge to Professional: Your Journey to IT Success.'</b><br>
+				data-en="We are delighted to invite you to our upcoming conference: <b>'From Technical Knowledge to Professional: Your Journey to IT Success.'</b><br>
 					In preparation for a day rich in networking opportunities, we would like to collect your questions.<br>
 					They will be asked to the speakers (IT HR/technical recruitment) at the event and must therefore be <b>relevant</b> to it.<br>
 					<b>Join us to gain the necessary knowledge to start your professional journey in the IT sector.</b>">
-				Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Du savoir technique au professionnel: votre itinéraire vers le succès IT</b><br>
-				En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
-				Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
-				<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
+				Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Du savoir technique au professionnel:
+					votre itinéraire vers le succès IT</b><br>
+				En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos
+				questions.<br>
+				Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent
+				être <b>pertinentes</b> par rapport à celui-ci.<br>
+				<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel
+					dans le secteur informatique.</b>
 			</p>
 		</div>
 	</div>
+	<!-- Modal Structure -->
+	<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalLabel" data-fr="Confirmation" data-en="Confirmation">Confirmation
+					</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" data-fr="Votre question a été soumise avec succès!"
+					data-en="Your question has been submitted successfully!">
+					Votre question a été soumise avec succès!
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" data-fr="Fermer"
+						data-en="Close">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+
+	<!-- Optionnel: jQuery et Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<script>
-		document.getElementById('loginButton').addEventListener('click', function() {
+		document.getElementById('loginButton').addEventListener('click', function () {
 			window.location.href = 'https://theomouty.fr/42explorer/?action=login';
 		});
 
 		function getAccessToken(code) {
-				const apiUrl = 'https://theomouty.fr/42explorer/?code='.concat(code);
-				fetch(apiUrl, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
+			const apiUrl = 'https://theomouty.fr/42explorer/?code='.concat(code);
+			fetch(apiUrl, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
 				.then(response => response.json())
 				.then(data => console.log(data))
 				.catch((error) => {
@@ -70,7 +103,7 @@
 			document.getElementById('secureContent').style.display = 'block';
 		}
 
-		window.onload = function() {
+		window.onload = function () {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
 			const state = urlParams.get('state');
@@ -86,25 +119,37 @@
 			var questionInput = document.getElementById('question');
 			var question = questionInput.value.trim();
 			var submitButton = document.querySelector('button[type="submit"]');
+			var currentLang = document.body.getAttribute('data-lang');
 
 			if (question === "") {
-				alert('Please enter a question.');
+				var errorText = currentLang === 'en' ? 'Please enter a question.' : 'Veuillez entrer une question.';
+				$('#questionModal').find('.modal-body').text(errorText);
+				$('#questionModal').modal('show');
 				questionInput.focus();
 				return;
 			}
-			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + question;
-				fetch(apiUrl, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
+			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + encodeURIComponent(question);
+			fetch(apiUrl, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
 				.then(response => response.json())
-				.then(data => console.log(data))
+				.then(data => {
+					console.log(data);
+					var successText = currentLang === 'en' ? 'Your question has been submitted successfully!' : 'Votre question a été soumise avec succès!';
+					$('#questionModal').find('.modal-body').text(successText);
+					$('#questionModal').modal('show');
+				})
 				.catch((error) => {
 					console.error('Error:', error);
+					var errorText = currentLang === 'en' ? 'Error: ' + error.message : 'Erreur : ' + error.message;
+					$('#questionModal').find('.modal-body').text(errorText);
+					$('#questionModal').modal('show');
 				});
 			submitButton.disabled = true;
+		} submitButton.disabled = true;
 		}
 
 		function toggleLanguage() {
@@ -114,7 +159,7 @@
 			document.body.setAttribute('data-lang', newLang);
 			document.getElementById('languageToggle').textContent = newLang.toUpperCase();
 
-			document.querySelectorAll('[data-fr]').forEach(function(el) {
+			document.querySelectorAll('[data-fr]').forEach(function (el) {
 				var newText = newLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
 				if (el.tagName.toLowerCase() === 'input') {
 					el.placeholder = newText;
@@ -128,11 +173,12 @@
 
 		document.body.setAttribute('data-lang', 'fr');
 
-		document.getElementById('languageToggle').addEventListener('click', function() {
+		document.getElementById('languageToggle').addEventListener('click', function () {
 			toggleLanguage();
 			this.blur();
 		});
 
 	</script>
 </body>
+
 </html>
