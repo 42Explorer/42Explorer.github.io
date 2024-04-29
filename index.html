@@ -81,31 +81,34 @@
 			})
 			.then(response => response.json())
 			.then(data => {
-				console.log(data.access_token);
-				return data.access_token;
+				const accessToken = data.access_token;
+				fetchUserData(accessToken);
 			})
 			.catch(error => console.error('Error obtaining access token:', error));
 		}
 
-		function loginRequest(access_token) {
-			var login;
-			fetch('https://api.intra.42.fr/v2/users', {
-			headers: {
-				'Authorization': 'Bearer ' + access_token
-			}
+		function fetchUserData(accessToken) {
+			fetch('https://api.intra.42.fr/v2/me', {
+				headers: {
+					'Authorization': 'Bearer ' + accessToken
+				}
 			})
 			.then(response => response.json())
-			.then(users => {
-			if (users.length > 0) {
-				return users[0].login;
-			}
+			.then(userData => {
+				const userLogin = userData.login;
+				displaySecureContent(userLogin);
 			})
 			.catch(error => {
-				console.error('Failed to fetch data:', error);
+				console.error('Failed to fetch user data:', error);
 			});
 		}
 
-		var login;
+		function displaySecureContent(login) {
+			document.getElementById('loginButton').style.display = 'none';
+			document.getElementById('secureContent').style.display = 'block';
+			sessionStorage.setItem('userLogin', login);
+		}
+
 		window.onload = function() {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
@@ -113,9 +116,7 @@
 			const savedState = sessionStorage.getItem('oauthState');
 
 			if (code && state === savedState) {
-				document.getElementById('loginButton').style.display = 'none';
-				document.getElementById('secureContent').style.display = 'block';
-				login = loginRequest(getAccessToken(code));
+				getAccessToken(code);
 			}
 		};
 
@@ -135,6 +136,7 @@
 			var questionInput = document.getElementById('question');
 			var question = questionInput.value.trim();
 			var submitButton = document.querySelector('button[type="submit"]');
+			var userLogin = sessionStorage.getItem('userLogin');
 
 			if (question === "") {
 				alert('Please enter a question.');
@@ -145,15 +147,16 @@
 			submitButton.disabled = true;
 
 			db.collection("questions").add({
-				question: login + ': ' + question
+				login: userLogin,
+				question: question
 			})
-			.then((docRef) => {
+			.then(docRef => {
 				console.log("Document written with ID: ", docRef.id);
 				alert('Question submitted successfully!');
 				questionInput.value = '';
 				submitButton.disabled = false;
 			})
-			.catch((error) => {
+			.catch(error => {
 				console.error("Error adding document: ", error);
 				alert('Failed to submit question. Please try again.');
 				submitButton.disabled = false;
