@@ -90,6 +90,7 @@
 			if (question === "") {
 				alert('Please enter a question.');
 				questionInput.focus();
+				submitButton.disabled = false;
 				return;
 			}
 			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + question;
