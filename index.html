@@ -68,7 +68,11 @@
 		});
 
 		function getAccessToken(code) {
-			console.log("2");
+			console.log("Testing with proxy");
+			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
+			const clientSecret = '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';
+			const redirectUri = 'https://42explorer.github.io';
+
 			const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 			const apiUrl = 'https://api.intra.42.fr/oauth/token';
 
@@ -87,32 +91,7 @@
 			.then(response => response.json())
 			.then(data => console.log(data))
 			.catch(error => console.error('Error:', error));
-
-			// fetch('https://api.intra.42.fr/oauth/token', {
-			// 	mode:  'cors',
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Access-Control-Allow-Origin': 'http://localhost',
-			// 		'Access-Control-Allow-Credentials': 'true',
-			// 		'Access-Control-Request-Method': 'POST',
-			// 		'Access-Control-Request-Headers': 'Content-Type, Authorization',
-			// 	},
-			// 	data: `{
-			// 		\"grant_type\": \"client_credentials\",
-			// 		\"client_id\": \"${clientId}\",
-			// 		\"client_secret\": \"${clientSecret}\"
-			// 	}`,
-			// })
-			// .then(response => response.json())
-			// .then(data => {
-			// 	console.log(data.access_token);
-			// 	//const accessToken = data.access_token;
-			// 	//fetchUserData(accessToken);
-			// })
-			// .catch(error => console.error('Error obtaining access token:', error));
 		}
-		document.getElementById('loginButton').style.display = 'none';
-		document.getElementById('secureContent').style.display = 'block';
 		getAccessToken();
 		function fetchUserData(accessToken) {
 			fetch('https://api.intra.42.fr/v2/me', {
@@ -135,6 +114,8 @@
 			});
 		}
 
+		document.getElementById('loginButton').style.display = 'none';
+		document.getElementById('secureContent').style.display = 'block';
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
