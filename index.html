@@ -100,11 +100,11 @@
 			})
 				.then(response => response.json())
 				.then(data => {
-					console.log(data);
-					if (data.code === '200') {
+					if (data.code === 200) {
 						alert('Question envoyée avec succès.');
 					} else {
 						alert('Erreur lors de l\'envoi de la question.');
+						console.error("Erreur lors de l'envoi de la question." + data);
 					}
 					questionInput.value = '';
 				})
