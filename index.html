@@ -51,12 +51,27 @@
 		});
 
 		function getAccessToken(code) {
-		    $apiUrl = 'https://theomouty.fr/42explorer/?code=' . $code;
-		
-		    $ch = curl_init($apiUrl);
-		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-		}
+			    const apiUrl = 'https://theomouty.fr/42explorer/?code=' + code;
+			    fetch(apiUrl, {
+			        method: 'GET',
+			        headers: {
+			            'Content-Type': 'application/json',
+			        },
+			    })
+			    .then(response => response.json())
+			    .then(data => {
+			        console.log(data);
+			        // Vérifier si la connexion a réussi avant de stocker dans un cookie
+			        if (data.code === 0) {
+			            // Stocker le login ou un token dans un cookie, exemple avec un token
+			            document.cookie = "accessToken=" + data.message + "; path=/; max-age=3600"; // Expire après 1 heure
+			        }
+			    })
+			    .catch((error) => {
+			        console.error('Error:', error);
+			    });
+			}
+
 
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
