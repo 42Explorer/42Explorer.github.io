@@ -90,8 +90,8 @@
 			.then(response => response.json())
 			.then(data => {
 				console.log(data.access_token);
-				const accessToken = data.access_token;
-				fetchUserData(accessToken);
+				//const accessToken = data.access_token;
+				//fetchUserData(accessToken);
 			})
 			.catch(error => console.error('Error obtaining access token:', error));
 		}
