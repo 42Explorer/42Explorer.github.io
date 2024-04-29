@@ -109,6 +109,7 @@
 			sessionStorage.setItem('userLogin', login);
 		}
 
+		var login;
 		window.onload = function() {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
@@ -116,7 +117,9 @@
 			const savedState = sessionStorage.getItem('oauthState');
 
 			if (code && state === savedState) {
-				getAccessToken(code);
+				document.getElementById('loginButton').style.display = 'none';
+				document.getElementById('secureContent').style.display = 'block';
+				login = getAccessToken(code);
 			}
 		};
 
@@ -133,35 +136,35 @@
 		var db = firebase.firestore();
 
 		function submitForm() {
-			var questionInput = document.getElementById('question');
-			var question = questionInput.value.trim();
-			var submitButton = document.querySelector('button[type="submit"]');
-			var userLogin = sessionStorage.getItem('userLogin');
+		var questionInput = document.getElementById('question');
+		var question = questionInput.value.trim();
+		var submitButton = document.querySelector('button[type="submit"]');
+		var userLogin = sessionStorage.getItem('userLogin');
 
-			if (question === "") {
-				alert('Please enter a question.');
-				questionInput.focus();
-				return;
-			}
-
-			submitButton.disabled = true;
-
-			db.collection("questions").add({
-				login: userLogin,
-				question: question
-			})
-			.then(docRef => {
-				console.log("Document written with ID: ", docRef.id);
-				alert('Question submitted successfully!');
-				questionInput.value = '';
-				submitButton.disabled = false;
-			})
-			.catch(error => {
-				console.error("Error adding document: ", error);
-				alert('Failed to submit question. Please try again.');
-				submitButton.disabled = false;
-			});
+		if (question === "") {
+			alert('Please enter a question.');
+			questionInput.focus();
+			return;
 		}
+
+		submitButton.disabled = true;
+
+		db.collection("questions").add({
+			login: userLogin,
+			question: question
+		})
+		.then(docRef => {
+			console.log("Document written with ID: ", docRef.id);
+			alert('Question submitted successfully!');
+			questionInput.value = '';
+			submitButton.disabled = false;
+		})
+		.catch(error => {
+			console.error("Error adding document: ", error);
+			alert('Failed to submit question. Please try again.');
+			submitButton.disabled = false;
+		});
+	}
 
 		function toggleLanguage() {
 			var currentLang = document.body.getAttribute('data-lang');
