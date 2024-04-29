@@ -114,17 +114,44 @@
 		}
 
 		window.onload = function() {
-			const urlParams = new URLSearchParams(window.location.search);
-			const code = urlParams.get('code');
+			const urlParams = new URLSearchParams(window.location.hash.substring(1));
+			const accessToken = urlParams.get('access_token');
 			const state = urlParams.get('state');
 			const savedState = sessionStorage.getItem('oauthState');
 
-			if (code && state === savedState) {
-				document.getElementById('loginButton').style.display = 'none';
-				document.getElementById('secureContent').style.display = 'block';
-				getAccessToken(code);
+			if (accessToken && state === savedState) {
+				fetchUserData(accessToken);
+			} else {
+				console.error('Invalid state or access token not provided');
 			}
 		};
+
+		function fetchUserData(accessToken) {
+			fetch('https://api.intra.42.fr/v2/me', {
+				headers: {
+					'Authorization': 'Bearer ' + accessToken
+				}
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok ' + response.statusText);
+				}
+				return response.json();
+			})
+			.then(userData => {
+				const userLogin = userData.login;
+				displaySecureContent(userLogin);
+				sessionStorage.setItem('userLogin', userLogin);
+			})
+			.catch(error => {
+				console.error('Failed to fetch user data:', error);
+			});
+		}
+
+		function displaySecureContent(userLogin) {
+			document.getElementById('loginButton').style.display = 'none';
+			document.getElementById('secureContent').style.display = 'block';
+		}
 
 		var firebaseConfig = {
 			apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
