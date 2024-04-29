@@ -51,27 +51,19 @@
 		});
 
 		function getAccessToken(code) {
-			    const apiUrl = 'https://theomouty.fr/42explorer/?code=' + code;
-			    fetch(apiUrl, {
-			        method: 'GET',
-			        headers: {
-			            'Content-Type': 'application/json',
-			        },
-			    })
-			    .then(response => response.json())
-			    .then(data => {
-			        console.log(data);
-			        // Vérifier si la connexion a réussi avant de stocker dans un cookie
-			        if (data.code === 0) {
-			            // Stocker le login ou un token dans un cookie, exemple avec un token
-			            document.cookie = "accessToken=" + data.message + "; path=/; max-age=3600"; // Expire après 1 heure
-			        }
-			    })
-			    .catch((error) => {
-			        console.error('Error:', error);
-			    });
-			}
-
+				const apiUrl = 'https://theomouty.fr/42explorer/?code='.concat(code);
+				fetch(apiUrl, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(response => response.json())
+				.then(data => console.log(response))
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+		}
 
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
@@ -86,7 +78,7 @@
 			if (code && state) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
-				//getAccessToken(code);
+				getAccessToken(code);
 			}
 		};
 
