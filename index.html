@@ -85,7 +85,6 @@
 			var questionInput = document.getElementById('question');
 			var question = questionInput.value.trim();
 			var submitButton = document.querySelector('button[type="submit"]');
-			var userLogin = sessionStorage.getItem('userLogin');
 
 			if (question === "") {
 				alert('Please enter a question.');
@@ -105,8 +104,6 @@
 					console.error('Error:', error);
 				});
 			submitButton.disabled = true;
-
-
 		}
 
 		function toggleLanguage() {
