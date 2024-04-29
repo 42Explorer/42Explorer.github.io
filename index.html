@@ -67,23 +67,48 @@
 			window.location.href = oauthUrl;
 		});
 
-		function loginRequest(code) {
-			var login;
-			fetch('https://api.intra.42.fr/v2/users', {
-			headers: {
-				'Authorization': code
-			}
+		function getAccessToken(code) {
+			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
+			const clientSecret = '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';
+			const redirectUri = 'https://42explorer.github.io';
+
+			fetch('https://api.intra.42.fr/oauth/token', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: `grant_type=authorization_code&client_id=${clientId}&client_secret=${clientSecret}&code=${code}&redirect_uri=${redirectUri}`
 			})
 			.then(response => response.json())
-			.then(users => {
-			if (users.length > 0) {
-				return users[0].login;
-			}
+			.then(data => {
+				const accessToken = data.access_token;
+				fetchUserData(accessToken);
+			})
+			.catch(error => console.error('Error obtaining access token:', error));
+		}
+
+		function fetchUserData(accessToken) {
+			fetch('https://api.intra.42.fr/v2/me', {
+				headers: {
+					'Authorization': 'Bearer ' + accessToken
+				}
+			})
+			.then(response => response.json())
+			.then(userData => {
+				const userLogin = userData.login;
+				displaySecureContent(userLogin);
 			})
 			.catch(error => {
-				console.error('Failed to fetch data:', error);
+				console.error('Failed to fetch user data:', error);
 			});
 		}
+
+		function displaySecureContent(login) {
+			document.getElementById('loginButton').style.display = 'none';
+			document.getElementById('secureContent').style.display = 'block';
+			console.log('Logged in user:', login);
+		}
+
 
 		var login;
 		window.onload = function() {
@@ -93,10 +118,7 @@
 			const savedState = sessionStorage.getItem('oauthState');
 
 			if (code && state === savedState) {
-				console.log(code);
-				document.getElementById('loginButton').style.display = 'none';
-				document.getElementById('secureContent').style.display = 'block';
-				login = loginRequest(code);
+				getAccessToken(code);
 			}
 		};
 
