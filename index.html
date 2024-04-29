@@ -95,11 +95,17 @@
 			})
 			.then(response => response.json())
 			.then(userData => {
-				const userLogin = userData.login;
-				displaySecureContent(userLogin);
+				if (userData && userData.login) {
+					const userLogin = userData.login;
+					displaySecureContent(userLogin);
+				} else {
+					console.error('No login data available:', userData);
+					alert('Failed to retrieve user information.');
+				}
 			})
 			.catch(error => {
 				console.error('Failed to fetch user data:', error);
+				alert('Failed to authenticate. Please try again.');
 			});
 		}
 
@@ -117,6 +123,8 @@
 
 			if (code && state === savedState) {
 				getAccessToken(code);
+			} else if (!code || state !== savedState) {
+				alert('Authentication failed or session expired. Please log in again.');
 			}
 		};
 
