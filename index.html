@@ -87,28 +87,23 @@
 			.catch(error => console.error('Error obtaining access token:', error));
 		}
 
-		function fetchUserData(accessToken) {
-			fetch('https://api.intra.42.fr/v2/me', {
-				headers: {
-					'Authorization': 'Bearer ' + accessToken
-				}
+		function loginRequest(access_token) {
+			var login;
+			fetch('https://api.intra.42.fr/v2/users', {
+			headers: {
+				'Authorization': 'Bearer ' + access_token
+			}
 			})
 			.then(response => response.json())
-			.then(userData => {
-				const userLogin = userData.login;
-				displaySecureContent(userLogin);
+			.then(users => {
+			if (users.length > 0) {
+				return users[0].login;
+			}
 			})
 			.catch(error => {
-				console.error('Failed to fetch user data:', error);
+				console.error('Failed to fetch data:', error);
 			});
 		}
-
-		function displaySecureContent(login) {
-			document.getElementById('loginButton').style.display = 'none';
-			document.getElementById('secureContent').style.display = 'block';
-			console.log('Logged in user:', login);
-		}
-
 
 		var login;
 		window.onload = function() {
@@ -118,7 +113,9 @@
 			const savedState = sessionStorage.getItem('oauthState');
 
 			if (code && state === savedState) {
-				getAccessToken(code);
+				document.getElementById('loginButton').style.display = 'none';
+				document.getElementById('secureContent').style.display = 'block';
+				login = loginRequest(getAccessToken(code));
 			}
 		};
 
