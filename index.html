@@ -71,7 +71,7 @@
 			var login;
 			fetch('https://api.intra.42.fr/v2/users', {
 			headers: {
-				'Authorization': 'Bearer ' + code
+				'Authorization': code
 			}
 			})
 			.then(response => response.json())
