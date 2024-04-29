@@ -74,9 +74,8 @@
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
 			const state = urlParams.get('state');
-			const savedState = sessionStorage.getItem('oauthState');
 
-			if (code && state === savedState) {
+			if (code && state) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
 			}
