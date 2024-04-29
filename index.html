@@ -46,80 +46,23 @@
 	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
 	<script>
-		function generateState(length) {
-			var result = '';
-			var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-			var charactersLength = characters.length;
-			for (var i = 0; i < length; i++) {
-				result += characters.charAt(Math.floor(Math.random() * charactersLength));
-			}
-			return result;
-		}
-
 		document.getElementById('loginButton').addEventListener('click', function() {
-			var clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			var redirectUri = encodeURIComponent('https://42explorer.github.io');
-			var scope = encodeURIComponent('public');
-			var state = generateState(16);
-			sessionStorage.setItem('oauthState', state);
-
-			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
-			window.location.href = oauthUrl;
+			window.location.href = 'https://theomouty.fr/42explorer/?action=login';
 		});
 
-		function getAccessToken() {
-			console.log("Version 4");
-			console.log(process.env.CLIENTID);
-			console.log("<%= CLIENTID %>");
-			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			const clientSecret = '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';
-			const redirectUri = 'https://42explorer.github.io';
-
-			const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-			const apiUrl = 'https://api.intra.42.fr/oauth/token';
-
-			fetch(proxyUrl + apiUrl, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Requested-With': 'XMLHttpRequest' // Some proxies require this header
-				},
-				body: JSON.stringify({
-					"grant_type": "client_credentials",
-					"client_id": clientId,
-					"client_secret": clientSecret
-				}),
-			})
-			.then(response => response.json())
-			.then(data => fetchUserData(data))
-			.catch(error => console.error('Error:', error));
-		}
-
-		function fetchUserData(accessToken) {
-			const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-			const apiUrl = 'https://api.intra.42.fr/v2/me';
-
-			fetch(proxyUrl + apiUrl, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Requested-With': 'XMLHttpRequest', // Some proxies require this header
-					'Authorization': 'Bearer ' + accessToken
-				},
-			})
-			.then(response => response.json())
-			.then(userData => {
-				console.log(userData); // Add this line to log the data and inspect the structure
-				const userLogin = userData.login;
-				if (!userLogin) {
-					throw new Error('Login data is not available in the user data response.');
-				}
-				displaySecureContent(userLogin);
-				sessionStorage.setItem('userLogin', userLogin);
-			})
-			.catch(error => {
-				console.error('Failed to fetch user data:', error);
-			});
+		function getAccessToken(code) {
+				const apiUrl = 'https://theomouty.fr/42explorer/?code=' + code;
+				fetch(apiUrl, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(response => response.json())
+				.then(data => console.log(data))
+				.catch((error) => {
+					console.error('Error:', error);
+				});
 		}
 
 		function displaySecureContent(login) {
@@ -136,21 +79,8 @@
 			if (code && state === savedState) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
-				getAccessToken(code);
 			}
 		};
-
-		var firebaseConfig = {
-			apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
-			authDomain: "conf-request.firebaseapp.com",
-			projectId: "conf-request",
-			storageBucket: "conf-request.appspot.com",
-			messagingSenderId: "316233234211",
-			appId: "1:316233234211:web:8acc9c1b2d6d7f4ddcfe96",
-			measurementId: "G-DJRGCFRKX0"
-		};
-		firebase.initializeApp(firebaseConfig);
-		var db = firebase.firestore();
 
 		function submitForm() {
 			var questionInput = document.getElementById('question');
@@ -163,24 +93,21 @@
 				questionInput.focus();
 				return;
 			}
-
+			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + question;
+				fetch(apiUrl, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(response => response.json())
+				.then(data => console.log(data))
+				.catch((error) => {
+					console.error('Error:', error);
+				});
 			submitButton.disabled = true;
 
-			db.collection("questions").add({
-				login: userLogin,
-				question: question
-			})
-			.then(docRef => {
-				console.log("Document written with ID: ", docRef.id);
-				alert('Question submitted successfully!');
-				questionInput.value = '';
-				submitButton.disabled = false;
-			})
-			.catch(error => {
-				console.error("Error adding document: ", error);
-				alert('Failed to submit question. Please try again.');
-				submitButton.disabled = false;
-			});
+
 		}
 
 		function toggleLanguage() {
