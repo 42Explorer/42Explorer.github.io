@@ -97,6 +97,7 @@
 			.then(userData => {
 				const userLogin = userData.login;
 				displaySecureContent(userLogin);
+				sessionStorage.setItem('userLogin', userLogin);
 			})
 			.catch(error => {
 				console.error('Failed to fetch user data:', error);
@@ -106,10 +107,8 @@
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
-			sessionStorage.setItem('userLogin', login);
 		}
 
-		var login;
 		window.onload = function() {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
@@ -119,7 +118,7 @@
 			if (code && state === savedState) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
-				login = getAccessToken(code);
+				getAccessToken(code);
 			}
 		};
 
@@ -136,35 +135,35 @@
 		var db = firebase.firestore();
 
 		function submitForm() {
-		var questionInput = document.getElementById('question');
-		var question = questionInput.value.trim();
-		var submitButton = document.querySelector('button[type="submit"]');
-		var userLogin = sessionStorage.getItem('userLogin');
+			var questionInput = document.getElementById('question');
+			var question = questionInput.value.trim();
+			var submitButton = document.querySelector('button[type="submit"]');
+			var userLogin = sessionStorage.getItem('userLogin');
 
-		if (question === "") {
-			alert('Please enter a question.');
-			questionInput.focus();
-			return;
+			if (question === "") {
+				alert('Please enter a question.');
+				questionInput.focus();
+				return;
+			}
+
+			submitButton.disabled = true;
+
+			db.collection("questions").add({
+				login: userLogin,
+				question: question
+			})
+			.then(docRef => {
+				console.log("Document written with ID: ", docRef.id);
+				alert('Question submitted successfully!');
+				questionInput.value = '';
+				submitButton.disabled = false;
+			})
+			.catch(error => {
+				console.error("Error adding document: ", error);
+				alert('Failed to submit question. Please try again.');
+				submitButton.disabled = false;
+			});
 		}
-
-		submitButton.disabled = true;
-
-		db.collection("questions").add({
-			login: userLogin,
-			question: question
-		})
-		.then(docRef => {
-			console.log("Document written with ID: ", docRef.id);
-			alert('Question submitted successfully!');
-			questionInput.value = '';
-			submitButton.disabled = false;
-		})
-		.catch(error => {
-			console.error("Error adding document: ", error);
-			alert('Failed to submit question. Please try again.');
-			submitButton.disabled = false;
-		});
-	}
 
 		function toggleLanguage() {
 			var currentLang = document.body.getAttribute('data-lang');
