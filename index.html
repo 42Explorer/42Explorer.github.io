@@ -68,17 +68,17 @@
 		});
 
 		function getAccessToken(code) {
-			console.log("Je suis la console ptdr");
-			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			const clientSecret = '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';
-			const redirectUri = 'https://42explorer.github.io';
-			fetch('https://api.intra.42.fr/oauth/token', {
-				mode: 'cors', // Use 'cors' to ensure CORS requests are made
+			console.log("1");
+			const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+			const apiUrl = 'https://api.intra.42.fr/oauth/token';
+
+			fetch(proxyUrl + apiUrl, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json', // Correct header for JSON payload
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest' // Some proxies require this header
 				},
-				body: JSON.stringify({ // Use 'body' to include data
+				body: JSON.stringify({
 					"grant_type": "client_credentials",
 					"client_id": clientId,
 					"client_secret": clientSecret
