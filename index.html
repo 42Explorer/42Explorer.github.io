@@ -69,11 +69,6 @@
 				});
 		}
 
-		function displaySecureContent(login) {
-			document.getElementById('loginButton').style.display = 'none';
-			document.getElementById('secureContent').style.display = 'block';
-		}
-
 		window.onload = function () {
 			const urlParams = new URLSearchParams(window.location.search);
 			const code = urlParams.get('code');
@@ -105,6 +100,7 @@
 			})
 				.then(response => response.json())
 				.then(data => {
+					console.log(data);
 					if (data.code === '200') {
 						alert('Question submitted successfully.');
 					} else {
