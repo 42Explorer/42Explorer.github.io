@@ -48,31 +48,7 @@
 			</p>
 		</div>
 	</div>
-	<!-- Modal Structure -->
-	<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel" data-fr="Confirmation" data-en="Confirmation">Confirmation
-					</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" data-fr="Votre question a été soumise avec succès!"
-					data-en="Your question has been submitted successfully!">
-					Votre question a été soumise avec succès!
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal" data-fr="Fermer"
-						data-en="Close">Fermer</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<!-- Optionnel: jQuery et Bootstrap JS -->
 	<script>
 		document.getElementById('loginButton').addEventListener('click', function () {
 			window.location.href = 'https://theomouty.fr/42explorer/?action=login';
@@ -128,7 +104,14 @@
 				},
 			})
 				.then(response => response.json())
-				.then(data => console.log(data))
+				.then(data => {
+					if (data.code === '200') {
+						alert('Question submitted successfully.');
+					} else {
+						alert('Failed to submit question.');
+					}
+					questionInput.value = '';
+				})
 				.catch((error) => {
 					console.error('Error:', error);
 				});
