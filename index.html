@@ -95,7 +95,7 @@
 			})
 			.then(response => response.json())
 			.then(userData => {
-				console.log(userData); // Add this line to log the data and inspect the structure
+				console.log(userData);
 				const userLogin = userData.login;
 				if (!userLogin) {
 					throw new Error('Login data is not available in the user data response.');
