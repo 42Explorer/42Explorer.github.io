@@ -1,138 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>42 Explorer</title>
-	<link rel="stylesheet" href="style.css">
-	<link rel="icon" href="./logoExplorerWhite.ico">
-</head>
-<body>
-	<div class="mainPage">
+<?php
+session_start();
 
-		<div class="header">
-			<a href="https://www.instagram.com/42_explorer" target="_blank">
-				<img src="./logoExplorerWhite.png" alt="Logo Explorer" width="100" height="100">
-			</a>
-			<h1 class="mainTitle">42 Explorer</h1>
-		</div>
+$clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
+$clientSecret = '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';
+$redirectUri = 'https://42explorer.github.io/';
 
-		<button id="loginButton">Login with 42</button>
+$retour = [
+	'code' => 0,
+	'message' => 'rien'
+];
 
-		<div id="secureContent" style="display: none;">
-			<button id="languageToggle">FR</button>
-			<form onsubmit="submitForm(); return false;">
-				<input type="text" id="question" data-fr="Posez vos questions !" data-en="Ask your questions!" placeholder="Posez vos questions !" autocomplete="off" autofocus>
-				<button type="submit" data-fr="Soumettre" data-en="Submit">Soumettre</button>
-			</form>
-			<p id="conferenceText" data-fr=
-					"Nous sommes ravis de vous inviter à notre prochaine conférence: <b>'Du savoir technique au professionnel: votre itinéraire vers le succès IT.'</b><br>
-					En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
-					Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
-					<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionnel dans le secteur informatique.</b>"
-				data-en=
-					"We are delighted to invite you to our upcoming conference: <b>'From Technical Knowledge to Professional: Your Journey to IT Success.'</b><br>
-					In preparation for a day rich in networking opportunities, we would like to collect your questions.<br>
-					They will be asked to the speakers (IT HR/technical recruitment) at the event and must therefore be <b>relevant</b> to it.<br>
-					<b>Join us to gain the necessary knowledge to start your professional journey in the IT sector.</b>">
-				Nous sommes ravis de vous inviter à notre prochaine conférence: <b>Du savoir technique au professionnel: votre itinéraire vers le succès IT</b><br>
-				En préparation d'une journée riche en opportunités de networking, nous aimerions récolter vos questions.<br>
-				Elles seront posées aux intervenants (RH IT/recrutement technique) lors de l'évènement et donc doivent être <b>pertinentes</b> par rapport à celui-ci.<br>
-				<b>Rejoignez-nous pour acquérir les connaissances nécessaires pour lancer votre parcours professionel dans le secteur informatique.</b>
-			</p>
-		</div>
-	</div>
+$key = "wegfMl3Jqw548few64fw45f";
 
-	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
-	<script>
-		document.getElementById('loginButton').addEventListener('click', function() {
-			window.location.href = 'https://theomouty.fr/42explorer/?action=login';
-		});
+function encrypt($data, $key) {
+	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+	$encrypted = openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
+	return base64_encode($encrypted . '::' . $iv);
+}
 
-		function getAccessToken(code) {
-				const apiUrl = 'https://theomouty.fr/42explorer/?code='.concat(code);
-				fetch(apiUrl, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
-				.then(response => response.json())
-				.then(data => console.log(response))
-				.catch((error) => {
-					console.error('Error:', error);
-				});
+function decrypt($data, $key) {
+	list($encryptedData, $iv) = explode('::', base64_decode($data), 2);
+	return openssl_decrypt($encryptedData, 'aes-256-cbc', $key, 0, $iv);
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'login') {
+    $state = bin2hex(random_bytes(16));
+    $_SESSION['state'] = $state;
+    $params = [
+        'client_id' => $clientId,
+        'redirect_uri' => $redirectUri,
+        'response_type' => 'code',
+        'scope' => 'public',
+        'state' => $state
+    ];
+    $url = 'https://api.intra.42.fr/oauth/authorize?' . http_build_query($params);
+    header('Location: ' . $url);
+}
+
+if (isset($_GET['code'])) {
+	if (!isset($_SESSION['login']) || (isset($_SESSION['login']) && empty($_SESSION['login']) && (!isset($_SESSION['code']) || $_SESSION['code'] !== $_GET['code']))) {
+		$_SESSION['code'] = $_GET['code'];
+    	$tokenUrl = 'https://api.intra.42.fr/oauth/token';
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $tokenUrl);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+			'grant_type' => 'authorization_code',
+			'client_id' => $clientId,
+			'client_secret' => $clientSecret,
+			'code' => $_GET['code'],
+			'redirect_uri' => $redirectUri
+		]));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($ch);
+		$data = json_decode($response, true);
+		$accessToken = $data['access_token'];
+
+		$meUrl = 'https://api.intra.42.fr/v2/me';
+		curl_setopt($ch, CURLOPT_URL, $meUrl);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $accessToken]);
+		curl_setopt($ch, CURLOPT_POST, false);
+		$userResponse = curl_exec($ch);
+		$userData = json_decode($userResponse, true);
+		curl_close($ch);
+		if (!isset($userData['login'])) {
+			$retour['code'] = 1;
+			$retour['message'] = 'Erreur lors de la récupération du login';
+			echo json_encode($retour);
+			exit();
 		}
+		$_SESSION['login'] = encrypt($userData['login'], $key);
+	}
+	$decrypt = decrypt($_SESSION['login'], $key);
+	$retour['message'] = $_SESSION['login'] . ' - ' . $decrypt;
+	echo json_encode($retour);
+	exit();
+}
 
-		function displaySecureContent(login) {
-			document.getElementById('loginButton').style.display = 'none';
-			document.getElementById('secureContent').style.display = 'block';
-		}
+if (isset($_GET['login']) && !empty($_GET['login']) && isset($_GET['message']) && !empty($_GET['message'])) {
+    $projectId = 'conf-request';
+    $collection = 'questions';
+    $apiKey = 'AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM';
+    $url = "https://firestore.googleapis.com/v1/projects/$projectId/databases/(default)/documents/$collection?key=$apiKey";
+	$login = decrypt($_SESSION['login'], $key);
+    $data = [
+        'fields' => [
+            'login' => ['stringValue' => $login],
+            'question' => ['stringValue' => $_GET['message']]
+        ]
+    ];
+    $dataJson = json_encode($data);
 
-		window.onload = function() {
-			const urlParams = new URLSearchParams(window.location.search);
-			const code = urlParams.get('code');
-			const state = urlParams.get('state');
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $dataJson);
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($dataJson)
+    ]);
 
-			if (code && state) {
-				document.getElementById('loginButton').style.display = 'none';
-				document.getElementById('secureContent').style.display = 'block';
-				getAccessToken(code);
-			}
-		};
+    $response = curl_exec($curl);
+    if ($response === false) {
+		$retour['code'] = 1;
+		$retour['message'] = 'Erreur lors de l\'envoi de la question';
+	} else {
+		$retour['code'] = 0;
+		$retour['message'] = 'Question envoyée';
+    }
+    curl_close($curl);
+}
+?>
 
-		function submitForm() {
-			var questionInput = document.getElementById('question');
-			var question = questionInput.value.trim();
-			var submitButton = document.querySelector('button[type="submit"]');
 
-			if (question === "") {
-				alert('Please enter a question.');
-				questionInput.focus();
-				return;
-			}
-			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + question;
-				fetch(apiUrl, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
-				.then(response => response.json())
-				.then(data => console.log(data))
-				.catch((error) => {
-					console.error('Error:', error);
-				});
-			submitButton.disabled = true;
-		}
 
-		function toggleLanguage() {
-			var currentLang = document.body.getAttribute('data-lang');
-			var newLang = currentLang === 'en' ? 'fr' : 'en';
-
-			document.body.setAttribute('data-lang', newLang);
-			document.getElementById('languageToggle').textContent = newLang.toUpperCase();
-
-			document.querySelectorAll('[data-fr]').forEach(function(el) {
-				var newText = newLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
-				if (el.tagName.toLowerCase() === 'input') {
-					el.placeholder = newText;
-				} else if (el.tagName.toLowerCase() === 'button') {
-					el.textContent = newText;
-				} else {
-					el.innerHTML = newText;
-				}
-			});
-		}
-
-		document.body.setAttribute('data-lang', 'fr');
-
-		document.getElementById('languageToggle').addEventListener('click', function() {
-			toggleLanguage();
-			this.blur();
-		});
-
-	</script>
-</body>
-</html>
+curl 'https://theomouty.fr/42explorer/?code=ff95ae49b4a4c6a57dc2473276bd4af771c83d1130e9f659af86c5257b2b1c66' \
+  -H 'authority: theomouty.fr' \
+  -H 'accept: */*' \
+  -H 'accept-language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7' \
+  -H 'content-type: application/json' \
+  -H 'origin: https://42explorer.github.io' \
+  -H 'referer: https://42explorer.github.io/' \
+  -H 'sec-ch-ua: "Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Linux"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: cross-site' \
+  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
+  --compressed
