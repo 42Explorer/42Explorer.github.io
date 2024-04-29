@@ -78,6 +78,7 @@
 			if (code && state) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
+				getAccessToken(code);
 			}
 		};
 
