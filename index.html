@@ -102,9 +102,9 @@
 				.then(data => {
 					console.log(data);
 					if (data.code === '200') {
-						alert('Question submitted successfully.');
+						alert('Question envoyée avec succès.');
 					} else {
-						alert('Failed to submit question.');
+						alert('Erreur lors de l\'envoi de la question.');
 					}
 					questionInput.value = '';
 				})
