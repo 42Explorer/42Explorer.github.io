@@ -81,6 +81,7 @@
 			})
 			.then(response => response.json())
 			.then(data => {
+				console.log(data.access_token);
 				return data.access_token;
 			})
 			.catch(error => console.error('Error obtaining access token:', error));
