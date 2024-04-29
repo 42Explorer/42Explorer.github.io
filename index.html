@@ -51,18 +51,11 @@
 		});
 
 		function getAccessToken(code) {
-				const apiUrl = 'https://theomouty.fr/42explorer/?code=' + code;
-				fetch(apiUrl, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				})
-				.then(response => response.json())
-				.then(data => console.log(data))
-				.catch((error) => {
-					console.error('Error:', error);
-				});
+		    $apiUrl = 'https://theomouty.fr/42explorer/?code=' . $code;
+		
+		    $ch = curl_init($apiUrl);
+		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 		}
 
 		function displaySecureContent(login) {
