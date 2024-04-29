@@ -102,11 +102,11 @@
 				.then(data => {
 					if (data.code === 200) {
 						alert('Question envoyée avec succès.');
+						questionInput.value = '';
 					} else {
 						alert('Erreur lors de l\'envoi de la question.');
 						console.error("Erreur lors de l'envoi de la question." + data);
 					}
-					questionInput.value = '';
 				})
 				.catch((error) => {
 					console.error('Error:', error);
