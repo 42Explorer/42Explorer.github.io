@@ -69,18 +69,16 @@
 
 		function getAccessToken(code) {
 			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			const clientSecret = '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';
+			const clientSecret = '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'; // Note: This should not be in client-side code
 			const redirectUri = 'https://42explorer.github.io';
-
 			const apiUrl = 'https://api.intra.42.fr/oauth/token';
 
 			fetch(apiUrl, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					'X-Requested-With': 'XMLHttpRequest'
+					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: `grant_type=client-credentials&client_id=${clientId}&client_secret=${clientSecret}&code=${code}&redirect_uri=${redirectUri}`
+				body: `grant_type=authorization_code&client_id=${clientId}&client_secret=${clientSecret}&code=${code}&redirect_uri=${redirectUri}`
 			})
 			.then(response => response.json())
 			.then(data => {
