@@ -85,6 +85,7 @@
 			var questionInput = document.getElementById('question');
 			var question = questionInput.value.trim();
 			var submitButton = document.querySelector('button[type="submit"]');
+			submitButton.disabled = true;
 
 			if (question === "") {
 				alert('Please enter a question.');
@@ -111,7 +112,7 @@
 				.catch((error) => {
 					console.error('Error:', error);
 				});
-			submitButton.disabled = true;
+			submitButton.disabled = false;
 		}
 
 		function toggleLanguage() {
