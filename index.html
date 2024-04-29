@@ -91,23 +91,6 @@
 			.catch(error => console.error('Error obtaining access token:', error));
 		}
 
-		function fetchUserData(accessToken) {
-			fetch('https://api.intra.42.fr/v2/me', {
-				headers: {
-					'Authorization': 'Bearer ' + accessToken
-				}
-			})
-			.then(response => response.json())
-			.then(userData => {
-				const userLogin = userData.login;
-				displaySecureContent(userLogin);
-				sessionStorage.setItem('userLogin', userLogin);
-			})
-			.catch(error => {
-				console.error('Failed to fetch user data:', error);
-			});
-		}
-
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
@@ -132,12 +115,7 @@
 					'Authorization': 'Bearer ' + accessToken
 				}
 			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok ' + response.statusText);
-				}
-				return response.json();
-			})
+			.then(response => response.json())
 			.then(userData => {
 				const userLogin = userData.login;
 				displaySecureContent(userLogin);
