@@ -68,52 +68,55 @@
 		});
 
 		function getAccessToken(code) {
-			console.log("Testing with new proxy");
+			console.log("Testing with proxy");
 			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
 			const clientSecret = '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';
 			const redirectUri = 'https://42explorer.github.io';
 
-			const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
-const apiUrl = 'https://api.intra.42.fr/oauth/token';
+			const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+			const apiUrl = 'https://api.intra.42.fr/oauth/token';
 
-fetch(proxyUrl + apiUrl, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        "grant_type": "client_credentials",
-        "client_id": clientId,
-        "client_secret": clientSecret
-    }),
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
+			fetch(proxyUrl + apiUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest' // Some proxies require this header
+				},
+				body: JSON.stringify({
+					"grant_type": "client_credentials",
+					"client_id": clientId,
+					"client_secret": clientSecret
+				}),
+			})
+			.then(response => response.json())
+			.then(data => fetchUserData(data))
+			.catch(error => console.error('Error:', error));
+		}
 		getAccessToken();
-		// function fetchUserData(accessToken) {
-		// 	fetch('https://api.intra.42.fr/v2/me', {
-		// 		headers: {
-		// 			'Authorization': 'Bearer ' + accessToken
-		// 		}
-		// 	})
-		// 	.then(response => response.json())
-		// 	.then(userData => {
-		// 		console.log(userData); // Add this line to log the data and inspect the structure
-		// 		const userLogin = userData.login;
-		// 		if (!userLogin) {
-		// 			throw new Error('Login data is not available in the user data response.');
-		// 		}
-		// 		displaySecureContent(userLogin);
-		// 		sessionStorage.setItem('userLogin', userLogin);
-		// 	})
-		// 	.catch(error => {
-		// 		console.error('Failed to fetch user data:', error);
-		// 	});
-		// }
-
 		document.getElementById('loginButton').style.display = 'none';
 		document.getElementById('secureContent').style.display = 'block';
+
+		function fetchUserData(accessToken) {
+			fetch('https://api.intra.42.fr/v2/me', {
+				headers: {
+					'Authorization': 'Bearer ' + accessToken
+				}
+			})
+			.then(response => response.json())
+			.then(userData => {
+				console.log(userData); // Add this line to log the data and inspect the structure
+				const userLogin = userData.login;
+				if (!userLogin) {
+					throw new Error('Login data is not available in the user data response.');
+				}
+				displaySecureContent(userLogin);
+				sessionStorage.setItem('userLogin', userLogin);
+			})
+			.catch(error => {
+				console.error('Failed to fetch user data:', error);
+			});
+		}
+
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
