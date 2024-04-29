@@ -63,29 +63,22 @@
 			var state = generateState(16);
 			sessionStorage.setItem('oauthState', state);
 
-			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+			var oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=${state}`;
 			window.location.href = oauthUrl;
 		});
 
-		function getAccessToken(code) {
-			const clientId = 'u-s4t2ud-1a7185f0b087881bd3b9143c93ec1be271d06f4db7f60ceef2a57a6b8ba8c94b';
-			const clientSecret = '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';
-			const redirectUri = 'https://42explorer.github.io';
+		window.onload = function() {
+			const urlParams = new URLSearchParams(window.location.hash.substring(1));
+			const accessToken = urlParams.get('access_token');
+			const state = urlParams.get('state');
+			const savedState = sessionStorage.getItem('oauthState');
 
-			fetch('https://api.intra.42.fr/oauth/token', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}&code=${code}&redirect_uri=${redirectUri}`
-			})
-			.then(response => response.json())
-			.then(data => {
-				const accessToken = data.access_token;
+			if (accessToken && state === savedState) {
 				fetchUserData(accessToken);
-			})
-			.catch(error => console.error('Error obtaining access token:', error));
-		}
+			} else {
+				console.error('Invalid state or access token not provided');
+			}
+		};
 
 		function fetchUserData(accessToken) {
 			fetch('https://api.intra.42.fr/v2/me', {
@@ -108,19 +101,6 @@
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
 		}
-
-		window.onload = function() {
-			const urlParams = new URLSearchParams(window.location.search);
-			const code = urlParams.get('code');
-			const state = urlParams.get('state');
-			const savedState = sessionStorage.getItem('oauthState');
-
-			if (code && state === savedState) {
-				document.getElementById('loginButton').style.display = 'none';
-				document.getElementById('secureContent').style.display = 'block';
-				getAccessToken(code);
-			}
-		};
 
 		var firebaseConfig = {
 			apiKey: "AIzaSyDAhazuV51FBXevU95zvchigy4fe7ofzyM",
