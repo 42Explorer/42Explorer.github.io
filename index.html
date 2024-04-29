@@ -111,6 +111,8 @@
 			// })
 			// .catch(error => console.error('Error obtaining access token:', error));
 		}
+		document.getElementById('loginButton').style.display = 'none';
+		document.getElementById('secureContent').style.display = 'block';
 		getAccessToken();
 		function fetchUserData(accessToken) {
 			fetch('https://api.intra.42.fr/v2/me', {
@@ -133,8 +135,6 @@
 			});
 		}
 
-		document.getElementById('loginButton').style.display = 'none';
-		document.getElementById('secureContent').style.display = 'block';
 		function displaySecureContent(login) {
 			document.getElementById('loginButton').style.display = 'none';
 			document.getElementById('secureContent').style.display = 'block';
