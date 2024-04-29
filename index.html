@@ -7,7 +7,6 @@
 	<title>42 Explorer</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" href="./logoExplorerWhite.ico">
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -73,11 +72,7 @@
 		</div>
 	</div>
 
-
 	<!-- Optionnel: jQuery et Bootstrap JS -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<script>
 		document.getElementById('loginButton').addEventListener('click', function () {
 			window.location.href = 'https://theomouty.fr/42explorer/?action=login';
@@ -119,16 +114,13 @@
 			var questionInput = document.getElementById('question');
 			var question = questionInput.value.trim();
 			var submitButton = document.querySelector('button[type="submit"]');
-			var currentLang = document.body.getAttribute('data-lang');
 
 			if (question === "") {
-				var errorText = currentLang === 'en' ? 'Please enter a question.' : 'Veuillez entrer une question.';
-				$('#questionModal').find('.modal-body').text(errorText);
-				$('#questionModal').modal('show');
+				alert('Please enter a question.');
 				questionInput.focus();
 				return;
 			}
-			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + encodeURIComponent(question);
+			const apiUrl = 'https://theomouty.fr/42explorer/?message=' + question;
 			fetch(apiUrl, {
 				method: 'GET',
 				headers: {
@@ -136,20 +128,11 @@
 				},
 			})
 				.then(response => response.json())
-				.then(data => {
-					console.log(data);
-					var successText = currentLang === 'en' ? 'Your question has been submitted successfully!' : 'Votre question a été soumise avec succès!';
-					$('#questionModal').find('.modal-body').text(successText);
-					$('#questionModal').modal('show');
-				})
+				.then(data => console.log(data))
 				.catch((error) => {
 					console.error('Error:', error);
-					var errorText = currentLang === 'en' ? 'Error: ' + error.message : 'Erreur : ' + error.message;
-					$('#questionModal').find('.modal-body').text(errorText);
-					$('#questionModal').modal('show');
 				});
 			submitButton.disabled = true;
-		} submitButton.disabled = true;
 		}
 
 		function toggleLanguage() {
