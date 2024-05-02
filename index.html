@@ -53,20 +53,42 @@
 		document.getElementById('loginButton').addEventListener('click', function () {
 			window.location.href = 'https://82.64.140.91/42_explorer/login';
 		});
+		function setCookie(name, value, days) {
+		    const date = new Date();
+		    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		    const expires = "expires=" + date.toUTCString();
+		    document.cookie = `${name}=${value}; ${expires}; path=/`;
+		}
+
+		function getCookie(name) {
+		    const nameEQ = name + "=";
+		    const ca = document.cookie.split(';');
+		    for (let i = 0; i < ca.length; i++) {
+		        let c = ca[i];
+		        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+		        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+		    }
+		    return null;
+		}
 
 		function getAccessToken(code) {
-			const apiUrl = 'https://82.64.140.91/42_explorer/getlogin/?code='.concat(code);
-			fetch(apiUrl, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(response => response.json())
-				.then(data => console.log(data))
-				.catch((error) => {
-					console.error('Error:', error);
-				});
+		    const apiUrl = 'https://82.64.140.91/42_explorer/getlogin/?code='.concat(code);
+		    fetch(apiUrl, {
+		        method: 'GET',
+		        headers: {
+		            'Content-Type': 'application/json',
+		        },
+		    })
+		    .then(response => response.json())
+		    .then(data => {
+		        console.log(data);
+		        if (data.message) {
+		            setCookie('login', data.message, 1);
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Error:', error);
+		    });
 		}
 
 		window.onload = function () {
@@ -93,7 +115,11 @@
 				submitButton.disabled = false;
 				return;
 			}
-			const apiUrl = 'https://82.64.140.91/42_explorer/AddQuestion/?question=' + question;
+			const loginCookie = getCookie('login');
+			let apiUrl = 'https://82.64.140.91/42_explorer/AddQuestion/?question=' + encodeURIComponent(question);
+			if (loginCookie) {
+				apiUrl += '&login=' + encodeURIComponent(loginCookie);
+			}
 			fetch(apiUrl, {
 				method: 'GET',
 				headers: {
