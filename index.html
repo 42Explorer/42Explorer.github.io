@@ -129,11 +129,11 @@
 				.then(response => response.json())
 				.then(data => {
 					if (data.success === true) {
-						alert('Question send with success !');
+						alert('Question sent successfully !');
 						questionInput.value = '';
 					} else {
-						alert('Error when sending the question. Try again.');
-						console.error("Error when sending the question. Try again." + data);
+						alert('Error while sending the question. Please try again.');
+						console.error("Error while sending the question. Please try again." + data);
 					}
 				})
 				.catch((error) => {
