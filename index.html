@@ -106,6 +106,7 @@
 						alert('Question envoyée avec succès.');
 						questionInput.value = '';
 					} else {
+						console.log(data);
 						alert('Erreur lors de l\'envoi de la question.');
 						console.error("Erreur lors de l'envoi de la question." + data);
 					}
