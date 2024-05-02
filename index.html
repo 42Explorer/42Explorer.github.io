@@ -55,7 +55,7 @@
 		});
 
 		function getAccessToken(code) {
-			const apiUrl = 'https://theomouty.fr/42explorer/?code='.concat(code);
+			const apiUrl = 'https://82.64.140.91/42_explorer/getlogin/?code='.concat(code);
 			fetch(apiUrl, {
 				method: 'GET',
 				headers: {
@@ -77,7 +77,7 @@
 			if (code && state) {
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById('secureContent').style.display = 'block';
-				//getAccessToken(code);
+				getAccessToken(code);
 			}
 		};
 
